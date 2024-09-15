@@ -106,3 +106,15 @@ git clone https://github.com/yourusername/your-repo.git
 6. Start Developing
 
     You can now work on the code as usual. Before each commit, the configured hooks will run to check for secrets, code issues, and more.
+
+# Findings:
+
+# Further improvements:
+
+[TO-DO] Implementing DAST in CI/CD pipelines: I tried scanning with owasp zap, that conveniently offers a [github action](https://github.com/zaproxy/action-api-scan/tree/main) with a [packaged API scan](https://www.zaproxy.org/docs/docker/api-scan/).
+
+When I tried locally, zap presented no findings, so I discarded the usage of this tool for now.
+In order to implement it it would be run with: `./zap-api-scan.py -t openapi.yml -f openapi` having done a `docker cp Documents/external/challenge-per/coding-challenge-personio/openapi_specs/openapi3.yml <containerID>:/zap/wrk/openapi.yml` first.
+
+![alt text](imgs/zap1.png)
+![alt text](imgs/zap2.png)
