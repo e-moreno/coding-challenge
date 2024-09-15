@@ -1,0 +1,29 @@
+name: Safety Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  safety_scan:
+    name: Run Safety SCA Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies and Safety
+        run: |
+          pip install safety
+          pip install -r requirements.txt
+
+      - name: Run Safety
+        run: |
+          safety check -r requirements.txt --full-report
