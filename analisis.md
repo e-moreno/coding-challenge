@@ -193,167 +193,186 @@ git clone https://github.com/yourusername/your-repo.git
 Some vulnerabilities in VAmPI require manual testing or specialized approaches. Below are these vulnerabilities and hints for the development team to identify them outside the pipeline.
 
 1. Broken Object Level Authorization (BOLA)
-Description: Endpoints allow users to access or modify resources they shouldn't, due to insufficient authorization checks.
 
-How to Identify:
+    Description: Endpoints allow users to access or modify resources they shouldn't, due to insufficient authorization checks.
 
-Manual API Testing:
+    How to Identify:
 
-Use tools like Postman or Insomnia to make API requests with IDs of resources owned by other users.
-Check if you can access or manipulate data not assigned to your user account.
-Code Review:
+    Manual API Testing:
 
-Examine the code to ensure that authorization checks are in place for each resource access.
+    Use tools like Postman or Insomnia to make API requests with IDs of resources owned by other users.
+    Check if you can access or manipulate data not assigned to your user account.
+    Code Review:
+
+    Examine the code to ensure that authorization checks are in place for each resource access.
+
 2. Mass Assignment
-Description: The application binds client-provided data to server-side objects without proper filtering, leading to unauthorized data manipulation.
 
-How to Identify:
+    Description: The application binds client-provided data to server-side objects without proper filtering, leading to unauthorized data manipulation.
 
-Testing with Additional Parameters:
+    How to Identify:
 
-Send API requests with extra fields not intended to be modified by users (e.g., is_admin=true).
-Observe if the application accepts and processes these fields.
-Review Data Binding Logic:
+    Testing with Additional Parameters:
 
-Ensure that the application explicitly defines which fields can be updated by the user.
+    Send API requests with extra fields not intended to be modified by users (e.g., is_admin=true).
+    Observe if the application accepts and processes these fields.
+    Review Data Binding Logic:
+
+    Ensure that the application explicitly defines which fields can be updated by the user.
+
 3. Improper Rate Limiting
-Description: Lack of rate limiting allows attackers to perform brute-force attacks or overwhelm the API.
 
-How to Identify:
+    Description: Lack of rate limiting allows attackers to perform brute-force attacks or overwhelm the API.
 
-Automated Request Flooding:
+    How to Identify:
 
-Use scripts or tools like ab (Apache Benchmark) to send a high volume of requests.
-Check if the application enforces limits or continues to process all requests.
-Review Middleware and Configuration:
+    Automated Request Flooding:
 
-Verify if rate limiting middleware (e.g., Flask-Limiter) is implemented.
+    Use scripts or tools like ab (Apache Benchmark) to send a high volume of requests.
+    Check if the application enforces limits or continues to process all requests.
+    Review Middleware and Configuration:
+
+    Verify if rate limiting middleware (e.g., Flask-Limiter) is implemented.
+
 4. Insecure JWT Handling
-Description: Issues with JSON Web Token (JWT) implementation, such as using weak signing algorithms or improper validation.
 
-How to Identify:
+    Description: Issues with JSON Web Token (JWT) implementation, such as using weak signing algorithms or improper validation.
 
-Token Manipulation:
+    How to Identify:
 
-Attempt to change the algorithm in the JWT header to none or downgrade to a weaker algorithm.
-See if the server accepts manipulated tokens.
-Code Analysis:
+    Token Manipulation:
 
-Check how tokens are generated and validated.
-Ensure that tokens are properly signed and verified.
+    Attempt to change the algorithm in the JWT header to none or downgrade to a weaker algorithm.
+    See if the server accepts manipulated tokens.
+    Code Analysis:
+
+    Check how tokens are generated and validated.
+    Ensure that tokens are properly signed and verified.
+
 5. Cross-Origin Resource Sharing (CORS) Misconfigurations
-Description: Misconfigured CORS settings can expose the API to cross-origin attacks.
 
-How to Identify:
+    Description: Misconfigured CORS settings can expose the API to cross-origin attacks.
 
-CORS Testing:
+    How to Identify:
 
-Use a web application to make cross-origin requests to the API.
-Check if responses contain wildcard Access-Control-Allow-Origin headers.
-Review CORS Policies:
+    CORS Testing:
 
-Ensure that only trusted origins are specified in the configuration.
+    Use a web application to make cross-origin requests to the API.
+    Check if responses contain wildcard Access-Control-Allow-Origin headers.
+    Review CORS Policies:
+
+    Ensure that only trusted origins are specified in the configuration.
+
 6. Lack of Input Validation Leading to SSRF
-Description: The application processes user-supplied URLs or data without proper validation, allowing Server-Side Request Forgery.
 
-How to Identify:
+    Description: The application processes user-supplied URLs or data without proper validation, allowing Server-Side Request Forgery.
 
-Input Testing:
+    How to Identify:
 
-Input URLs pointing to internal resources (e.g., http://localhost/admin).
-Observe if the application fetches and returns data from these URLs.
-Review External Request Functions:
+    Input Testing:
 
-Check where the application makes outbound requests based on user input.
-Implement whitelisting or strict validation.
+    Input URLs pointing to internal resources (e.g., http://localhost/admin).
+    Observe if the application fetches and returns data from these URLs.
+    Review External Request Functions:
+
+    Check where the application makes outbound requests based on user input.
+    Implement whitelisting or strict validation.
+
 7. Directory Traversal
-Description: The application allows users to access files outside the intended directories.
 
-How to Identify:
+    Description: The application allows users to access files outside the intended directories.
 
-Parameter Manipulation:
+    How to Identify:
 
-Use ../ sequences in file paths to access sensitive files.
-Test endpoints that serve files or accept file paths.
-Code Inspection:
+    Parameter Manipulation:
 
-Ensure that file access functions sanitize input paths.
+    Use ../ sequences in file paths to access sensitive files.
+    Test endpoints that serve files or accept file paths.
+    Code Inspection:
+
+    Ensure that file access functions sanitize input paths.
+
 8. Unrestricted File Uploads
-Description: Users can upload files without proper checks, potentially leading to code execution.
 
-How to Identify:
+    Description: Users can upload files without proper checks, potentially leading to code execution.
 
-File Upload Testing:
+    How to Identify:
 
-Attempt to upload executable scripts or files with dangerous extensions.
-Check if the application stores and possibly executes these files.
-Review Upload Handling Code:
+    File Upload Testing:
 
-Implement file type validation and store uploads outside the web root.
+    Attempt to upload executable scripts or files with dangerous extensions.
+    Check if the application stores and possibly executes these files.
+    Review Upload Handling Code:
+
+    Implement file type validation and store uploads outside the web root.
+
 9. Improper Error Handling
-Description: Detailed error messages reveal sensitive information about the application.
 
-How to Identify:
+    Description: Detailed error messages reveal sensitive information about the application.
 
-Error Induction:
+    How to Identify:
 
-Cause errors by sending malformed requests.
-Observe if stack traces or debug information is returned.
-Configuration Review:
+    Error Induction:
 
-Ensure that debug mode is disabled in production.
-Use generic error messages for users.
+    Cause errors by sending malformed requests.
+    Observe if stack traces or debug information is returned.
+    Configuration Review:
+
+    Ensure that debug mode is disabled in production.
+    Use generic error messages for users.
+
 10. Use of Insecure or Deprecated Protocols
-Description: The application uses outdated protocols like HTTP instead of HTTPS.
 
-How to Identify:
+    Description: The application uses outdated protocols like HTTP instead of HTTPS.
 
-Network Traffic Analysis:
+    How to Identify:
 
-Monitor network traffic to see if sensitive data is transmitted over HTTP.
-Use tools like Wireshark or Burp Suite.
-Configuration Check:
+    Network Traffic Analysis:
 
-Ensure the application enforces HTTPS and uses secure configurations.
-Additional Recommendations for the Development Team
+    Monitor network traffic to see if sensitive data is transmitted over HTTP.
+    Use tools like Wireshark or Burp Suite.
+    Configuration Check:
 
-Implement Comprehensive Authorization Checks:
+    Ensure the application enforces HTTPS and uses secure configurations.
+    Additional Recommendations for the Development Team
 
-Verify that every endpoint enforces proper authorization based on user roles and permissions.
-Enforce Strict Input Validation:
+    Implement Comprehensive Authorization Checks:
 
-Use allowlists to validate user input.
-Sanitize and encode data before processing.
-Enable Rate Limiting:
+    Verify that every endpoint enforces proper authorization based on user roles and permissions.
+    Enforce Strict Input Validation:
 
-Implement rate limiting to prevent abuse of API endpoints.
-Secure JWT Implementation:
+    Use allowlists to validate user input.
+    Sanitize and encode data before processing.
+    Enable Rate Limiting:
 
-Use strong algorithms like HS256 or RS256.
-Validate tokens thoroughly on each request.
-Configure CORS Properly:
+    Implement rate limiting to prevent abuse of API endpoints.
+    Secure JWT Implementation:
 
-Specify exact origins that are allowed to interact with the API.
-Avoid using wildcards in CORS headers.
-Sanitize File Paths and Uploads:
+    Use strong algorithms like HS256 or RS256.
+    Validate tokens thoroughly on each request.
+    Configure CORS Properly:
 
-Restrict file access to specific directories.
-Validate file types and scan uploads for malware.
-Handle Errors Securely:
+    Specify exact origins that are allowed to interact with the API.
+    Avoid using wildcards in CORS headers.
+    Sanitize File Paths and Uploads:
 
-Disable detailed error messages in production.
-Log errors internally and provide generic messages to users.
-Use Secure Communication Protocols:
+    Restrict file access to specific directories.
+    Validate file types and scan uploads for malware.
+    Handle Errors Securely:
 
-Enforce HTTPS using TLS 1.2 or higher.
-Keep certificates up to date and configured correctly.
-Regular Security Training:
+    Disable detailed error messages in production.
+    Log errors internally and provide generic messages to users.
+    Use Secure Communication Protocols:
 
-Educate the team on common API vulnerabilities and secure coding practices.
-Perform Manual Code Reviews and Penetration Testing:
+    Enforce HTTPS using TLS 1.2 or higher.
+    Keep certificates up to date and configured correctly.
+    Regular Security Training:
 
-Regularly review code for security issues not caught by automated tools.
-Engage professional security testers to perform in-depth assessments.
+    Educate the team on common API vulnerabilities and secure coding practices.
+    Perform Manual Code Reviews and Penetration Testing:
+
+    Regularly review code for security issues not caught by automated tools.
+    Engage professional security testers to perform in-depth assessments.
 
 
 # Further improvements:
