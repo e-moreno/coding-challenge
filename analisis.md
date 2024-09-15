@@ -107,6 +107,14 @@ git clone https://github.com/yourusername/your-repo.git
 
 # Findings:
 
+![alt text](imgs/semgrep.png)
+
+![alt text](imgs/safety.png)
+
+![alt text](imgs/bandit.png)
+
+![alt text](imgs/trufflehog.png)
+
 1. Bandit (Static Application Security Testing - SAST)
 
     Bandit scans Python code for security issues. In the context of VAmPI, Bandit can detect:
